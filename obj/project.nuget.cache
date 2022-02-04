@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "jPV2S7MIFFOmEsHr1IEfAyH9lUrbVbHqnXbZLrN7Vu0bpoxsK+CmxvxZARwka7zjxb+NUAZl09XNvNTwmlElgg==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\yup_c\\source\\repos\\csAssetBundleUtil\\csAssetBundleUtil.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\yup_c\\.nuget\\packages\\microsoft.netcore.platforms\\1.1.0\\microsoft.netcore.platforms.1.1.0.nupkg.sha512",
+    "C:\\Users\\yup_c\\.nuget\\packages\\netstandard.library\\2.0.3\\netstandard.library.2.0.3.nupkg.sha512"
+  ],
+  "logs": []
+}
