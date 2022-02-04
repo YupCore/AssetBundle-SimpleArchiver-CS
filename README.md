@@ -5,7 +5,7 @@ It creates binary compressed file wich contains raw data and txt file that repre
 
 Example Usage:
 
-```
+```cs
 var test = AssetBundle.CreateBundle("bundle.bin", "binfo.txt", args); // Create an asset bundle with name bundle.bin and info path, and with string[] args as file paths
 var abs = AssetBundle.CacheBundleInfo("bundle.bin","binfo.txt"); // Read AB from disk (just for testing)
 
