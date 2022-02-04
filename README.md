@@ -1,7 +1,8 @@
 # AssetBundleCS
-A small archivator-like tool to compress files into one and the read them.
+A small archivator-like tool to compress files into one and the read them. 
 
-It creates binary compressed file wich contains raw data and txt file that represents header from wich the location of file is read and its name.
+Mainly targeted for game development, for example when you need to create an archive of your game assets which your game will then read.
+It creates binaryfile wich contains raw compressed data and txt file that represents header from wich the location of file is read and its name.
 
 Example Usage:
 
