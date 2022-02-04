@@ -1,4 +1,4 @@
-# AssetBundleCS
+# AssetBundle, SimpleArchiver tool CS
 A small archivator-like tool to compress files into one and the read them. 
 
 Mainly targeted for game development, for example when you need to create an archive of your game assets which your game will then read.
