@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
+using System.Threading.Tasks;
 
 //Yup Core 2021
 // Part of YupEngine
@@ -76,7 +77,12 @@ namespace AssetBundleUtils
             bundle.bundleFile = new FileStream(bundlePath, FileMode.Open);
             return bundle;
         }
-        
+
+        public void Close()
+        {
+            bundleFile.Close();
+        }
+
         public string[] ListFiles()
         {
             string[] files = bundleInfoStr.Split(';');
@@ -87,7 +93,11 @@ namespace AssetBundleUtils
             }
             return names.ToArray();
         }
-        
+        public async Task<byte[]> ReadDataAsync(string fileName)
+        {
+            var t = await Task.Run(() => ReadData(fileName));
+            return t;
+        }
         public byte[] ReadData(string FileName)
         {
             string bundleInfo = bundleInfoStr;
