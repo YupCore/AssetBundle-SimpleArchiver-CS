@@ -11,10 +11,10 @@ string[] args = { "tt.txt", "conifer_macedonian_pine_Normal.png" };
 var test = AssetBundle.CreateBundle("bundle.bin", "binfo.txt", args); // Create an asset bundle with name bundle.bin and info path, and with string[] args as file paths
 var abs = AssetBundle.CacheBundleInfo("bundle.bin","binfo.txt"); // Read AB from disk (just for testing)
 
-File.WriteAllBytes("tt.txt", abs.ReadData("tt.txt")); // Read some asset and write it to file
-File.WriteAllBytes("conifer_macedonian_pine_Normal.png", test.ReadData("conifer_macedonian_pine_Normal.png")); // Read some asset and write it to file
+File.WriteAllBytes("text.txt", abs.ReadData("tt.txt")); // Read some asset and write it to file
+File.WriteAllBytes("pine_Normal.png", test.ReadData("conifer_macedonian_pine_Normal.png")); // Read some asset and write it to file
 foreach(string str in abs.ListFiles())
 {
-    Console.Write(str); // tt.txt, conifer_macedonian_pine_Normal.png
+    Console.Write(str + " "); // tt.txt, conifer_macedonian_pine_Normal.png
 }
 ```
