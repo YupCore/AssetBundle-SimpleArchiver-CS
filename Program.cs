@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
@@ -41,6 +41,7 @@ namespace AssetBundleUtils
     {
         public string bundleInfoStr;
         public string bundlePathRelative;
+        public FileStream bundleFile = null;
         public static AssetBundle CreateBundle(string bundleName, string bundleInfoName, string[] args)
         {
             File.WriteAllText(bundleInfoName, "");
@@ -63,18 +64,20 @@ namespace AssetBundleUtils
             AssetBundle bundle = new AssetBundle();
             bundle.bundleInfoStr = File.ReadAllText(bundleInfoName);
             bundle.bundlePathRelative = bundleInfoName;
+            ms.Close();
+            bundle.bundleFile = new FileStream(bundleName, FileMode.Open);
             return bundle;
         }
         public static AssetBundle CacheBundleInfo(string bundlePath,string bundleInfoPath)
         {
             AssetBundle bundle = new AssetBundle();
-            bundle.bundlePathRelative= bundlePath;
+            bundle.bundlePathRelative = bundlePath;
             bundle.bundleInfoStr = File.ReadAllText(bundleInfoPath);
+            bundle.bundleFile = new FileStream(bundlePath, FileMode.Open);
             return bundle;
         }
         public byte[] ReadData(string FileName)
         {
-            FileStream fs = new FileStream(bundlePathRelative,FileMode.Open); // For large asset bundles
             string bundleInfo = bundleInfoStr;
 
             string[] split1 = bundleInfo.Split(';');
@@ -107,17 +110,17 @@ namespace AssetBundleUtils
                     if (i == 0)
                     {
                         byte[] segment = new byte[startIndexes[names.IndexOf(str)]];
-                        fs.Read(segment, 0, segment.Length);
-                        fs.Close();
+                        bundleFile.Read(segment, 0, segment.Length);
+                        bundleFile.Close();
                         byte[] uncompressed = AssetBundleUtil.Decompress(segment);
                         return uncompressed;
                     }
                     else
                     {
                         byte[] segment = new byte[startIndexes[names.IndexOf(str)] - startIndexes[names.IndexOf(str) - 1]];
-                        fs.Position = startIndexes[names.IndexOf(str) - 1];
-                        fs.Read(segment, 0, segment.Length);
-                        fs.Close();
+                        bundleFile.Position = startIndexes[names.IndexOf(str) - 1];
+                        bundleFile.Read(segment, 0, segment.Length);
+                        bundleFile.Close();
                         byte[] uncompressed = AssetBundleUtil.Decompress(segment);
                         return uncompressed;
                     }
