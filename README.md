@@ -7,14 +7,17 @@ It creates binary file wich contains raw compressed data and txt file that repre
 Example Usage:
 
 ```cs
-string[] args = { "tt.txt", "conifer_macedonian_pine_Normal.png" };
-var test = AssetBundle.CreateBundle("bundle.bin", "binfo.txt", args); // Create an asset bundle with name bundle.bin and info path, and with string[] args as file paths
-var abs = AssetBundle.CacheBundleInfo("bundle.bin","binfo.txt"); // Read AB from disk (just for testing)
+string[] args = { "tt.txt", "Combined_Ferns_01.psd" };
+var abs = AssetBundle.CreateBundle("bundle.bin", "binfo.txt", args); // Create an asset bundle with name bundle.bin and info path, and with string[] args as file paths
 
 File.WriteAllBytes("text.txt", abs.ReadData("tt.txt")); // Read some asset and write it to file
-File.WriteAllBytes("pine_Normal.png", test.ReadData("conifer_macedonian_pine_Normal.png")); // Read some asset and write it to file
-foreach(string str in abs.ListFiles())
+abs.Close(); // Close assetBundle because 2 calls on one file is restricted
+
+            
+var abs2 = AssetBundle.CacheBundleInfo("bundle.bin", "binfo.txt"); // Read AB from disk (just for testing)
+File.WriteAllBytes("ferns_01.psd", abs2.ReadData("Combined_Ferns_01.psd")); // Read some asset and write it to file
+foreach (string str in abs2.ListFiles())
 {
-    Console.Write(str + " "); // tt.txt, conifer_macedonian_pine_Normal.png
+      Console.Write(str + " "); // tt.txt, conifer_macedonian_pine_Normal.png
 }
 ```
