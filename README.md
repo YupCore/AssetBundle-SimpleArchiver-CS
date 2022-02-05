@@ -13,4 +13,8 @@ var abs = AssetBundle.CacheBundleInfo("bundle.bin","binfo.txt"); // Read AB from
 
 File.WriteAllBytes("tt.txt", abs.ReadData("tt.txt")); // Read some asset and write it to file
 File.WriteAllBytes("conifer_macedonian_pine_Normal.png", test.ReadData("conifer_macedonian_pine_Normal.png")); // Read some asset and write it to file
+foreach(string str in abs.ListFiles())
+{
+    Console.Write(str); // tt.txt, conifer_macedonian_pine_Normal.png
+}
 ```
