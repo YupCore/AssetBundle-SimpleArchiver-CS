@@ -123,7 +123,6 @@ namespace AssetBundleUtils
                     {
                         byte[] segment = new byte[startIndexes[names.IndexOf(str)]];
                         bundleFile.Read(segment, 0, segment.Length);
-                        bundleFile.Close();
                         byte[] uncompressed = AssetBundleUtil.Decompress(segment);
                         return uncompressed;
                     }
@@ -132,7 +131,6 @@ namespace AssetBundleUtils
                         byte[] segment = new byte[startIndexes[names.IndexOf(str)] - startIndexes[names.IndexOf(str) - 1]];
                         bundleFile.Position = startIndexes[names.IndexOf(str) - 1];
                         bundleFile.Read(segment, 0, segment.Length);
-                        bundleFile.Close();
                         byte[] uncompressed = AssetBundleUtil.Decompress(segment);
                         return uncompressed;
                     }
