@@ -76,6 +76,18 @@ namespace AssetBundleUtils
             bundle.bundleFile = new FileStream(bundlePath, FileMode.Open);
             return bundle;
         }
+        
+        public string[] ListFiles()
+        {
+            string[] files = bundleInfoStr.Split(';');
+            List<string> names = new List<string>();
+            foreach (string str in files)
+            {
+                names.Add(str.Split(':')[0]);
+            }
+            return names.ToArray();
+        }
+        
         public byte[] ReadData(string FileName)
         {
             string bundleInfo = bundleInfoStr;
