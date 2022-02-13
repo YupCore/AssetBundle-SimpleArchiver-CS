@@ -7,17 +7,47 @@ It creates binary file wich contains raw compressed data and txt file that repre
 Example Usage:
 
 ```cs
-string[] args = { "tt.txt", "Combined_Ferns_01.psd" };
-var abs = AssetBundle.CreateBundle("bundle.bin", "binfo.txt", args); // Create an asset bundle with name bundle.bin and info path, and with string[] args as file paths
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using AssetBundleUtils;
 
-File.WriteAllBytes("text.txt", abs.ReadData("tt.txt")); // Read some asset and write it to file
-abs.Close(); // Close assetBundle because 2 calls on one file is restricted
-
-            
-var abs2 = AssetBundle.CacheBundleInfo("bundle.bin", "binfo.txt"); // Read AB from disk (just for testing)
-File.WriteAllBytes("ferns_01.psd", abs2.ReadData("Combined_Ferns_01.psd")); // Read some asset and write it to file
-foreach (string str in abs2.ListFiles())
+namespace AssetTools
 {
-      Console.Write(str + " "); // tt.txt, conifer_macedonian_pine_Normal.png
+    internal class Program
+    {
+        static void ReadToFile(AssetBundle abs,string filename)
+        {
+            byte[] dat = abs.ReadData(filename);
+            File.WriteAllBytes(filename,dat);
+            GC.Collect();
+        }
+        static void Main(string[] args)
+        {
+            int headerSize = 1024 * 100;
+            AssetBundle abs = null;
+            if (!File.Exists("data.pak"))
+            {
+                abs = AssetBundle.CreateBundle("data.pak",headerSize, args); // Create an asset bundle with name bundle.bin and info path, and with string[] args as file paths
+            }
+            else
+            {
+                abs = AssetBundle.CacheBundleInfo("data.pak",headerSize);
+            }
+            Console.WriteLine("Enter number of files to read:");
+            int numFilesRead = int.Parse(Console.ReadLine());
+            for(int i = 0;i< numFilesRead;i++)
+            {
+                Console.WriteLine("Please enter file to read:");
+                ReadToFile(abs, Console.ReadLine());
+            }
+
+            Console.WriteLine("Press any key to close app:");
+            Console.ReadKey();
+        }
+    }
 }
+
 ```
