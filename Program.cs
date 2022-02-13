@@ -2,6 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
+using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 //Yup Core 2021
@@ -18,9 +21,9 @@ namespace AssetBundleUtils
                 dstream.Write(data, 0, data.Length);
                 dstream.Close();
             }
-            byte[] arr = output.ToArray();
+            byte[] res = output.ToArray();
             output.Close();
-            return arr;
+            return res;
         }
 
         public static byte[] Decompress(byte[] data)
@@ -32,10 +35,10 @@ namespace AssetBundleUtils
                 dstream.CopyTo(output);
                 dstream.Close();
             }
-            byte[] arr = output.ToArray();
-            output.Close();
             input.Close();
-            return arr;
+            byte[] result = output.ToArray();
+            output.Close();
+            return result;
         }
     }
     public class AssetBundle
@@ -43,38 +46,65 @@ namespace AssetBundleUtils
         public string bundleInfoStr;
         public string bundlePathRelative;
         public FileStream bundleFile = null;
-        public static AssetBundle CreateBundle(string bundleName, string bundleInfoName, string[] args)
+        public static AssetBundle CreateBundle(string bundleName, int headerSize, string[] args)
         {
-            File.WriteAllText(bundleInfoName, "");
-            FileStream ms = new FileStream(bundleName,FileMode.Create);
-            int fileEndIndex = 0;
+            FileStream ms = new FileStream(bundleName, FileMode.Create);
+            long fileEndIndex = 0;
+            string bInfo = "";
             for (int i = 0; i < args.Length; i++)
             {
-                byte[] bytes = AssetBundleUtil.Compress(File.ReadAllBytes(args[i]));
-                fileEndIndex += bytes.Length;
+                byte[] uncompressedFile = File.ReadAllBytes(args[i]);
+                byte[] localFile = AssetBundleUtil.Compress(uncompressedFile);
+                fileEndIndex += localFile.Length;
                 if (i == args.Length - 1)
                 {
-                    File.AppendAllText(bundleInfoName, Path.GetFileName(args[i]) + ":" + fileEndIndex);
+                    bInfo += Path.GetFileName(args[i]) + ":" + fileEndIndex;
                 }
                 else
                 {
-                    File.AppendAllText(bundleInfoName, Path.GetFileName(args[i]) + ":" + fileEndIndex + ";");
+                    bInfo += Path.GetFileName(args[i]) + ":" + fileEndIndex + ";";
                 }
-                ms.Write(bytes, 0, bytes.Length);
+                ms.Write(localFile, 0, localFile.Length);
+                GC.Collect();
             }
             AssetBundle bundle = new AssetBundle();
-            bundle.bundleInfoStr = File.ReadAllText(bundleInfoName);
-            bundle.bundlePathRelative = bundleInfoName;
+            bundle.bundleInfoStr = bInfo;
+            bundle.bundlePathRelative = bundleName;
+
+            byte[] headerB = Encoding.UTF8.GetBytes(bInfo);
+            List<byte> header = new List<byte>(headerSize); // Create a header for files
+            for(int i = 0;i < headerB.Length;i++)
+            {
+                header.Add(headerB[i]);
+            }
+            var whitespace = Encoding.UTF8.GetBytes("!");
+            while (header.Count < headerSize)
+            {
+                for (int i = 0; i < whitespace.Length; i++)
+                {
+                    header.Add(whitespace[i]);
+                }
+            }
+            ms.Write(header.ToArray(), 0, header.Count);
             ms.Close();
             bundle.bundleFile = new FileStream(bundleName, FileMode.Open);
             return bundle;
         }
-        public static AssetBundle CacheBundleInfo(string bundlePath,string bundleInfoPath)
+        public static AssetBundle CacheBundleInfo(string bundlePath, int headerSize)
         {
             AssetBundle bundle = new AssetBundle();
             bundle.bundlePathRelative = bundlePath;
-            bundle.bundleInfoStr = File.ReadAllText(bundleInfoPath);
             bundle.bundleFile = new FileStream(bundlePath, FileMode.Open);
+
+            //Header read part
+            bundle.bundleFile.Position = bundle.bundleFile.Length - headerSize;
+            byte[] headerBytes = new byte[headerSize];
+            bundle.bundleFile.Read(headerBytes, 0, headerBytes.Length);
+            string headerStr = Encoding.UTF8.GetString(headerBytes);
+            string bundleInfo = new string(headerStr.Where(c => !char.IsLetter('!')).ToArray());
+            bundle.bundleFile.Position = 0;
+            bundle.bundleInfoStr = bundleInfo;
+
             return bundle;
         }
 
@@ -105,7 +135,7 @@ namespace AssetBundleUtils
             string[] split1 = bundleInfo.Split(';');
             List<string> names = new List<string>();
             List<int> startIndexes = new List<int>();
-            
+
 
             List<string> spt = new List<string>();
             foreach (string str in split1)
@@ -124,7 +154,7 @@ namespace AssetBundleUtils
                     continue;
                 }
             }
-            for(int i = 0; i < names.Count; i++)
+            for (int i = 0; i < names.Count; i++)
             {
                 string str = names[i];
                 if (str == FileName)
@@ -134,6 +164,7 @@ namespace AssetBundleUtils
                         byte[] segment = new byte[startIndexes[names.IndexOf(str)]];
                         bundleFile.Read(segment, 0, segment.Length);
                         byte[] uncompressed = AssetBundleUtil.Decompress(segment);
+                        GC.Collect();
                         return uncompressed;
                     }
                     else
@@ -142,11 +173,12 @@ namespace AssetBundleUtils
                         bundleFile.Position = startIndexes[names.IndexOf(str) - 1];
                         bundleFile.Read(segment, 0, segment.Length);
                         byte[] uncompressed = AssetBundleUtil.Decompress(segment);
+                        GC.Collect();
                         return uncompressed;
                     }
                 }
             }
-            throw new Exception("FILE DOESN'T EXISTS IN ASSET BUNDLE:" + FileName);
+            return null;
         }
 
         #region NotFinished

@@ -2,9 +2,9 @@
 
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>AssetBundle</AssemblyName>
     <RootNamespace>AssetBundleUtil</RootNamespace>
+    <TargetFramework>net45</TargetFramework>
   </PropertyGroup>
 
 </Project>

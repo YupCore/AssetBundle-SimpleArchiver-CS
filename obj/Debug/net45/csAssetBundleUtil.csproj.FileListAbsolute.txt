@@ -1,0 +1,9 @@
+C:\Users\yup_c\source\repos\csAssetBundleUtil\bin\Debug\net45\AssetBundle.dll
+C:\Users\yup_c\source\repos\csAssetBundleUtil\bin\Debug\net45\AssetBundle.pdb
+C:\Users\yup_c\source\repos\csAssetBundleUtil\obj\Debug\net45\csAssetBundleUtil.csproj.AssemblyReference.cache
+C:\Users\yup_c\source\repos\csAssetBundleUtil\obj\Debug\net45\csAssetBundleUtil.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\yup_c\source\repos\csAssetBundleUtil\obj\Debug\net45\csAssetBundleUtil.AssemblyInfoInputs.cache
+C:\Users\yup_c\source\repos\csAssetBundleUtil\obj\Debug\net45\csAssetBundleUtil.AssemblyInfo.cs
+C:\Users\yup_c\source\repos\csAssetBundleUtil\obj\Debug\net45\csAssetBundleUtil.csproj.CoreCompileInputs.cache
+C:\Users\yup_c\source\repos\csAssetBundleUtil\obj\Debug\net45\AssetBundle.dll
+C:\Users\yup_c\source\repos\csAssetBundleUtil\obj\Debug\net45\AssetBundle.pdb
