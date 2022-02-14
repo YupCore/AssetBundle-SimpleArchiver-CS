@@ -55,7 +55,7 @@ namespace AssetBundleUtils
             {
                 byte[] uncompressedFile = File.ReadAllBytes(args[i]);
                 byte[] localFile = AssetBundleUtil.Compress(uncompressedFile);
-                fileEndIndex += localFile.Length;
+                fileEndIndex += localFile.LongLength;
                 if (i == args.Length - 1)
                 {
                     bInfo += Path.GetFileName(args[i]) + ":" + fileEndIndex;
@@ -73,7 +73,7 @@ namespace AssetBundleUtils
 
             byte[] headerB = Encoding.UTF8.GetBytes(bInfo);
             List<byte> header = new List<byte>(headerSize); // Create a header for files
-            for(int i = 0;i < headerB.Length;i++)
+            for (int i = 0; i < headerB.Length; i++)
             {
                 header.Add(headerB[i]);
             }
@@ -90,7 +90,7 @@ namespace AssetBundleUtils
             bundle.bundleFile = new FileStream(bundleName, FileMode.Open);
             return bundle;
         }
-        public static AssetBundle CacheBundleInfo(string bundlePath, int headerSize)
+        public static AssetBundle CacheBundleInfo(string bundlePath, long headerSize)
         {
             AssetBundle bundle = new AssetBundle();
             bundle.bundlePathRelative = bundlePath;
@@ -101,7 +101,7 @@ namespace AssetBundleUtils
             byte[] headerBytes = new byte[headerSize];
             bundle.bundleFile.Read(headerBytes, 0, headerBytes.Length);
             string headerStr = Encoding.UTF8.GetString(headerBytes);
-            string bundleInfo = new string(headerStr.Where(c => !char.IsLetter('!')).ToArray());
+            string bundleInfo = headerStr.Replace("!", "");
             bundle.bundleFile.Position = 0;
             bundle.bundleInfoStr = bundleInfo;
 
@@ -134,7 +134,7 @@ namespace AssetBundleUtils
 
             string[] split1 = bundleInfo.Split(';');
             List<string> names = new List<string>();
-            List<int> startIndexes = new List<int>();
+            List<long> startIndexes = new List<long>();
 
 
             List<string> spt = new List<string>();
@@ -147,7 +147,7 @@ namespace AssetBundleUtils
             {
                 try
                 {
-                    startIndexes.Add(int.Parse(str.Split(':')[1]));
+                    startIndexes.Add(long.Parse(str.Split(':')[1]));
                 }
                 catch
                 {
@@ -180,69 +180,5 @@ namespace AssetBundleUtils
             }
             return null;
         }
-
-        #region NotFinished
-        //public void OverrideFile(string fileName, byte[] newData) //
-        //{
-        //    MemoryStream mem = new MemoryStream(File.ReadAllBytes(bundlePathRelative));
-
-        //    string bundleInfo = bundleInfoStr;
-
-        //    string[] split1 = bundleInfo.Split(';');
-        //    List<string> names = new List<string>();
-        //    List<int> startIndexes = new List<int>();
-
-
-        //    List<string> spt = new List<string>();
-        //    foreach (string str in split1)
-        //    {
-        //        names.Add(str.Split(':')[0]);
-        //        spt.Add(str);
-        //    }
-        //    foreach (string str in spt)
-        //    {
-        //        try
-        //        {
-        //            startIndexes.Add(int.Parse(str.Split(':')[1]));
-        //        }
-        //        catch
-        //        {
-        //            continue;
-        //        }
-        //    }
-
-        //    for (int i = 0; i < names.Count; i++)
-        //    {
-        //        string str = names[i];
-        //        if (str == fileName)
-        //        {
-        //            if (i == 0)
-        //            {
-        //                split1[i] = "";
-        //                byte[] processed = startIndexes[names.IndexOf(str)];
-        //            }
-        //            else
-        //            {
-        //                split1[i] = "";
-        //            }
-        //        }
-        //    }
-        //}
-        #endregion
     }
-
-    // Sample Usage
-
-    //class Program
-    //{
-    //    public static void Main(string[] args)
-    //    {
-    //        AssetBundle.CreateBundle("bundle.bin", "binfo.txt", args);
-    //        //var abs = AssetBundle.CacheBundleInfo("bundle.bin","binfo.txt");
-
-    //        //File.WriteAllBytes("tt.txt", abs.ReadData("tt.txt"));
-    //        //File.WriteAllBytes("conifer_macedonian_pine_Normal.png", abs.ReadData("conifer_macedonian_pine_Normal.png"));
-    //        //File.WriteAllBytes("11229-normal.jpg", abs.ReadData("11229-normal.jpg"));
-    //    }
-    //}
 }
